@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   Home,
@@ -25,6 +25,7 @@ interface SidebarProps {
 const Sidebar = ({ className = "" }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -58,6 +59,12 @@ const Sidebar = ({ className = "" }: SidebarProps) => {
     { icon: <Settings size={20} />, label: "Settings", path: "/settings" },
   ];
 
+  const closeMobileMenu = () => {
+    if (isMobileOpen) {
+      setIsMobileOpen(false);
+    }
+  };
+
   return (
     <>
       {/* Mobile menu button */}
@@ -81,12 +88,12 @@ const Sidebar = ({ className = "" }: SidebarProps) => {
       >
         {/* Logo and collapse button */}
         <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <PawPrint size={24} className="text-primary" />
             {!collapsed && (
               <span className="font-semibold text-lg">PetCare</span>
             )}
-          </div>
+          </Link>
           <Button
             variant="ghost"
             size="icon"
@@ -121,20 +128,33 @@ const Sidebar = ({ className = "" }: SidebarProps) => {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4">
           <ul className="space-y-1 px-2">
-            {navItems.map((item, index) => (
-              <li key={index}>
-                <Link
-                  to={item.path}
-                  className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors",
-                    collapsed ? "justify-center" : "",
-                  )}
-                >
-                  <span className="text-muted-foreground">{item.icon}</span>
-                  {!collapsed && <span>{item.label}</span>}
-                </Link>
-              </li>
-            ))}
+            {navItems.map((item, index) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <li key={index}>
+                  <Link
+                    to={item.path}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "hover:bg-accent text-foreground",
+                      collapsed ? "justify-center" : "",
+                    )}
+                    onClick={closeMobileMenu}
+                  >
+                    <span
+                      className={
+                        isActive ? "text-primary" : "text-muted-foreground"
+                      }
+                    >
+                      {item.icon}
+                    </span>
+                    {!collapsed && <span>{item.label}</span>}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
