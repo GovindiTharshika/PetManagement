@@ -90,13 +90,30 @@ const PetsList = () => {
   });
 
   const handleAddPet = () => {
+    // Validate required fields
+    if (!newPet.name || !newPet.breed) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
     const pet = {
       ...newPet,
       id: Date.now().toString(),
     };
     setPets([...pets, pet]);
     setIsAddPetOpen(false);
-    setNewPet({ name: "", breed: "", age: 0, type: "Dog" });
+    setNewPet({
+      name: "",
+      breed: "",
+      age: 0,
+      type: "Dog",
+      weight: "",
+      birthdate: "",
+      microchipId: "",
+      allergies: "",
+      specialNeeds: "",
+      photoUrl: "",
+    });
   };
 
   const handleViewPet = (id: string) => {
